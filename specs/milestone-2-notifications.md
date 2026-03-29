@@ -17,13 +17,12 @@ Add a settings screen where users can toggle notifications on or off. When enabl
 - [ ] Settings screen is accessible from Queue View (e.g. gear icon)
 - [ ] User can toggle notifications on or off
 - [ ] User can set a reminder delay: 15 min / 30 min / 1 hr / 2 hr / 4 hr (default: 1 hr)
-- [ ] Adding the first item to an empty queue schedules one local notification at `now + delay`
-- [ ] Adding more items to a non-empty queue does NOT create additional notifications
+- [ ] After last item added, a notification is scheduled for `now + delay`
+- [ ] Adding more items to a non-empty queue resets the notification timer.
 - [ ] Clearing all items before the timer fires cancels the scheduled notification
 - [ ] Notification reads: *"You have N things in your queue."*
 - [ ] Toggling notifications off cancels any pending notification immediately
 - [ ] Settings persist across app restarts (local, per-device)
-- [ ] On web, the notifications setting is hidden or shown as unavailable with a clear explanation
 
 ---
 
@@ -33,7 +32,6 @@ Add a settings screen where users can toggle notifications on or off. When enabl
 - No push notifications (local only)
 - No notification sound or vibration customization
 - No notification history
-- No web notifications
 - No snooze action from the notification
 - No sync of settings across devices
 - No accounts or cloud (deferred to Milestone 3)
@@ -50,7 +48,6 @@ Add a settings screen where users can toggle notifications on or off. When enabl
 | Reminder delay | Selector (15 min / 30 min / 1 hr / 2 hr / 4 hr) | 1 hr |
 
 - Stored locally per device; not synced
-- Web: notifications row absent or disabled with a note (e.g. *"Notifications are not supported on web"*)
 
 ---
 
@@ -59,7 +56,7 @@ Add a settings screen where users can toggle notifications on or off. When enabl
 | Event | Result |
 |---|---|
 | First item added to empty queue | Schedule one notification at `now + delay` |
-| Additional items added (queue non-empty) | No change |
+| Additional items added (queue non-empty) | Reset timer to `now + delay` |
 | All items dismissed before timer fires | Cancel the scheduled notification |
 | Timer fires | Show: *"You have N things in your queue."* |
 | Notifications toggled off | Cancel any pending notification immediately |
