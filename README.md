@@ -33,7 +33,7 @@ flutter doctor
 ## Installation
 
 ```sh
-git clone <repo-url>
+git clone https://github.com/shlomo-maghen/mind-q
 cd mind-q
 flutter pub get
 ```
