@@ -9,6 +9,12 @@ class QueueItem {
     required this.createdAt,
   });
 
+  QueueItem copyWith({String? text}) => QueueItem(
+        id: id,
+        text: text ?? this.text,
+        createdAt: createdAt,
+      );
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'text': text,

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../models/queue_item.dart';
 import '../providers/queue_provider.dart';
 import 'empty_state.dart';
 import 'queue_item_card.dart';
@@ -18,28 +17,19 @@ class QueueView extends ConsumerStatefulWidget {
 }
 
 class _QueueViewState extends ConsumerState<QueueView> {
-  final _scrollController = ScrollController();
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
-  bool _isSnapping = false;
-
-  // Must match the visual height of QueueItemCard (card + margins).
-  static const double _itemExtent = 96.0;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
     _focusNode.addListener(_onFocusChange);
   }
 
-  void _onScroll() => setState(() {});
   void _onFocusChange() => setState(() {});
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
     _textController.dispose();
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
@@ -57,23 +47,6 @@ class _QueueViewState extends ConsumerState<QueueView> {
       try {
         await _appChannel.invokeMethod('moveToBackground');
       } catch (_) {}
-    }
-  }
-
-  void _snapToNearest(int itemCount) {
-    if (!_scrollController.hasClients || _isSnapping) return;
-    final offset = _scrollController.offset;
-    final targetIndex = (offset / _itemExtent).round().clamp(0, itemCount - 1);
-    final targetOffset = targetIndex * _itemExtent;
-    if ((offset - targetOffset).abs() > 0.5) {
-      _isSnapping = true;
-      _scrollController
-          .animateTo(
-            targetOffset,
-            duration: const Duration(milliseconds: 280),
-            curve: Curves.easeOutCubic,
-          )
-          .whenComplete(() => _isSnapping = false);
     }
   }
 
@@ -110,8 +83,31 @@ class _QueueViewState extends ConsumerState<QueueView> {
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(child: Text('Error: $e')),
-                  data: (items) =>
-                      items.isEmpty ? const EmptyState() : _buildList(items),
+                  data: (items) => items.isEmpty
+                      ? const EmptyState()
+                      : Align(
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 560),
+                            child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                final item = items[index];
+                                return QueueItemCard(
+                                  key: ValueKey(item.id),
+                                  item: item,
+                                  onComplete: () => ref
+                                      .read(queueProvider.notifier)
+                                      .remove(item.id),
+                                  onEdit: (text) => ref
+                                      .read(queueProvider.notifier)
+                                      .edit(item.id, text),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                 ),
                 if (isFocused)
                   Positioned.fill(
@@ -199,72 +195,6 @@ class _QueueViewState extends ConsumerState<QueueView> {
           );
         },
       ),
-    );
-  }
-
-  Widget _buildList(List<QueueItem> items) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final anchorY = constraints.maxHeight * 0.25;
-        final topPadding = anchorY - _itemExtent / 2;
-        final bottomPadding = constraints.maxHeight - anchorY - _itemExtent / 2;
-        final scrollOffset =
-            _scrollController.hasClients ? _scrollController.offset : 0.0;
-        const fadeRange = _itemExtent * 2.0;
-
-        return Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: NotificationListener<ScrollEndNotification>(
-              onNotification: (_) {
-                _snapToNearest(items.length);
-                return false;
-              },
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: items.length,
-                padding:
-                    EdgeInsets.only(top: topPadding, bottom: bottomPadding),
-                itemBuilder: (context, index) {
-                  final item = items[index];
-                  final selectedIndex = (scrollOffset / _itemExtent)
-                      .round()
-                      .clamp(0, items.length - 1);
-                  final focused = index == selectedIndex;
-                  final itemCenter = topPadding +
-                      index * _itemExtent +
-                      _itemExtent / 2 -
-                      scrollOffset;
-                  final distanceFromCenter = (itemCenter - anchorY).abs();
-                  final focusFactor =
-                      (1.0 - distanceFromCenter / fadeRange).clamp(0.0, 1.0);
-                  final opacity = 0.28 + 0.72 * focusFactor;
-                  final extraPad = (1.0 - focusFactor) * 24.0;
-
-                  return SizedBox(
-                    height: _itemExtent,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: extraPad),
-                      child: Opacity(
-                        opacity: opacity,
-                        child: QueueItemCard(
-                          key: ValueKey(item.id),
-                          item: item,
-                          focusFactor: focusFactor,
-                          focused: focused,
-                          onComplete: () =>
-                              ref.read(queueProvider.notifier).remove(item.id),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

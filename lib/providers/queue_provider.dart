@@ -27,6 +27,17 @@ class QueueNotifier extends AsyncNotifier<List<QueueItem>> {
     await _scheduleNotification(updated.length);
   }
 
+  Future<void> edit(String id, String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+    final current = state.valueOrNull ?? [];
+    final updated = current
+        .map((e) => e.id == id ? e.copyWith(text: trimmed) : e)
+        .toList();
+    state = AsyncData(updated);
+    await _repo.saveAll(updated);
+  }
+
   Future<void> remove(String id) async {
     final current = state.valueOrNull ?? [];
     final updated = current.where((e) => e.id != id).toList();
