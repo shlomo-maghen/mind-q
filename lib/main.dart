@@ -1,9 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'services/notification_service.dart';
 import 'ui/queue_view.dart';
+import 'ui/settings_view.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await NotificationService.instance.init();
+  }
   runApp(const ProviderScope(child: MindQApp()));
 }
 
@@ -25,6 +32,10 @@ class _MindQAppState extends State<MindQApp> {
         GoRoute(
           path: '/',
           builder: (context, state) => const QueueView(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsView(),
         ),
       ],
     );

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../models/queue_item.dart';
 import '../providers/queue_provider.dart';
 import 'empty_state.dart';
@@ -86,6 +87,13 @@ class _QueueViewState extends ConsumerState<QueueView> {
       appBar: AppBar(
         title: const Text('Mind-Q'),
         centerTitle: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => context.push('/settings'),
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
