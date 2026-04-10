@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'providers/queue_provider.dart';
+import 'providers/settings_provider.dart';
 import 'services/notification_service.dart';
 import 'ui/queue_view.dart';
 import 'ui/settings_view.dart';
@@ -14,19 +16,21 @@ void main() async {
   runApp(const ProviderScope(child: MindQApp()));
 }
 
-class MindQApp extends StatefulWidget {
+class MindQApp extends ConsumerStatefulWidget {
   const MindQApp({super.key});
 
   @override
-  State<MindQApp> createState() => _MindQAppState();
+  ConsumerState<MindQApp> createState() => _MindQAppState();
 }
 
-class _MindQAppState extends State<MindQApp> {
+class _MindQAppState extends ConsumerState<MindQApp>
+    with WidgetsBindingObserver {
   late final GoRouter _router;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _router = GoRouter(
       routes: [
         GoRoute(
@@ -42,7 +46,27 @@ class _MindQAppState extends State<MindQApp> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("app lifecycle state");
+    if (kIsWeb) return;
+    if (state == AppLifecycleState.paused) {
+      _maybeScheduleNotification();
+    } else if (state == AppLifecycleState.resumed) {
+      NotificationService.instance.cancel();
+    }
+  }
+
+  Future<void> _maybeScheduleNotification() async {
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (settings == null || !settings.enabled) return;
+    final queue = ref.read(queueProvider).valueOrNull;
+    if (queue == null || queue.isEmpty) return;
+    await NotificationService.instance.schedule(queue.length, settings.delayMinutes);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _router.dispose();
     super.dispose();
   }

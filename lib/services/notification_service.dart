@@ -43,6 +43,7 @@ class NotificationService {
 
   Future<void> schedule(int count, int delayMinutes) async {
     await cancel();
+    debugPrint("scheduling");
     final now = tz.TZDateTime.now(tz.UTC);
     final scheduledTime = now.add(Duration(minutes: delayMinutes));
     final body =
@@ -70,6 +71,7 @@ class NotificationService {
   }
 
   Future<void> cancel() async {
+    debugPrint("canceling");
     await _plugin.cancel(_notifId);
   }
 }
