@@ -47,7 +47,6 @@ class _MindQAppState extends ConsumerState<MindQApp>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint("app lifecycle state");
     if (kIsWeb) return;
     if (state == AppLifecycleState.paused) {
       _maybeScheduleNotification();

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz_data;
@@ -28,22 +27,23 @@ class NotificationService {
   }
 
   Future<void> requestPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    if (android != null) {
-      await android.requestNotificationsPermission();
-      return;
-    }
-    final ios = _plugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
-    if (ios != null) {
-      await ios.requestPermissions(alert: true, badge: true, sound: false);
-    }
+    try {
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      if (android != null) {
+        await android.requestNotificationsPermission();
+        return;
+      }
+      final ios = _plugin.resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>();
+      if (ios != null) {
+        await ios.requestPermissions(alert: true, badge: true, sound: false);
+      }
+    } catch (_) {}
   }
 
   Future<void> schedule(int count, int delayMinutes) async {
     await cancel();
-    debugPrint("scheduling");
     final now = tz.TZDateTime.now(tz.UTC);
     final scheduledTime = now.add(Duration(minutes: delayMinutes));
     final body =
@@ -71,7 +71,8 @@ class NotificationService {
   }
 
   Future<void> cancel() async {
-    debugPrint("canceling");
-    await _plugin.cancel(_notifId);
+    try {
+      await _plugin.cancel(_notifId);
+    } catch (_) {}
   }
 }
