@@ -50,10 +50,37 @@ class _QueueViewState extends ConsumerState<QueueView> {
     }
   }
 
+  Future<void> _confirmClearAll() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear all items?'),
+        content: const Text('This will remove all items from your queue.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            child: const Text('Clear all'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(queueProvider.notifier).clearAll();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final queueState = ref.watch(queueProvider);
     final isFocused = _focusNode.hasFocus;
+    final hasItems = queueState.valueOrNull?.isNotEmpty ?? false;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -90,7 +117,10 @@ class _QueueViewState extends ConsumerState<QueueView> {
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 560),
                             child: ListView.builder(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                bottom: 72,
+                              ),
                               itemCount: items.length,
                               itemBuilder: (context, index) {
                                 final item = items[index];
@@ -125,10 +155,31 @@ class _QueueViewState extends ConsumerState<QueueView> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                     child: _buildActionButtons(),
                   ),
+                if (!isFocused && hasItems)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: _buildClearAllBar(),
+                  ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildClearAllBar() {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: TextButton(
+        onPressed: _confirmClearAll,
+        style: TextButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.error,
+        ),
+        child: const Text('Clear all'),
       ),
     );
   }

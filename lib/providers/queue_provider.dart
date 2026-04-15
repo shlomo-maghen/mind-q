@@ -40,6 +40,11 @@ class QueueNotifier extends AsyncNotifier<List<QueueItem>> {
     state = AsyncData(updated);
     await _repo.saveAll(updated);
   }
+
+  Future<void> clearAll() async {
+    state = const AsyncData([]);
+    await _repo.saveAll([]);
+  }
 }
 
 final queueProvider =
