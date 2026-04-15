@@ -42,7 +42,6 @@ class _QueueViewState extends ConsumerState<QueueView> {
     await ref.read(queueProvider.notifier).add(text);
     if (!mounted) return;
     _textController.clear();
-    _focusNode.unfocus();
     if (quickAdd && !kIsWeb) {
       try {
         await _appChannel.invokeMethod('moveToBackground');
