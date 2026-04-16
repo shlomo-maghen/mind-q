@@ -87,6 +87,12 @@ class _QueueViewState extends ConsumerState<QueueView> {
         title: const Text('Mind-Q'),
         centerTitle: false,
         actions: [
+          if (hasItems)
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Clear all',
+              onPressed: _confirmClearAll,
+            ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             tooltip: 'Settings',
@@ -154,31 +160,10 @@ class _QueueViewState extends ConsumerState<QueueView> {
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                     child: _buildActionButtons(),
                   ),
-                if (!isFocused && hasItems)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: _buildClearAllBar(),
-                  ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildClearAllBar() {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      child: TextButton(
-        onPressed: _confirmClearAll,
-        style: TextButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.error,
-        ),
-        child: const Text('Clear all'),
       ),
     );
   }
