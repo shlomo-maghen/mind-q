@@ -117,19 +117,17 @@ class _QueueViewState extends ConsumerState<QueueView> {
                   error: (e, _) => Center(child: Text('Error: $e')),
                   data: (items) => items.isEmpty
                       ? const EmptyState()
-                      : Align(
-                          alignment: Alignment.topCenter,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 560),
-                            child: ListView.builder(
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 72,
-                              ),
-                              itemCount: items.length,
-                              itemBuilder: (context, index) {
-                                final item = items[index];
-                                return QueueItemCard(
+                      : ListView.builder(
+                          padding: const EdgeInsets.only(top: 8),
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            return Align(
+                              alignment: Alignment.topCenter,
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 560),
+                                child: QueueItemCard(
                                   key: ValueKey(item.id),
                                   item: item,
                                   onComplete: () => ref
@@ -138,10 +136,10 @@ class _QueueViewState extends ConsumerState<QueueView> {
                                   onEdit: (text) => ref
                                       .read(queueProvider.notifier)
                                       .edit(item.id, text),
-                                );
-                              },
-                            ),
-                          ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                 ),
                 if (isFocused)
