@@ -85,13 +85,15 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      Text(
-                        'Remind me after',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: settings.enabled
-                                  ? null
-                                  : Theme.of(context).disabledColor,
-                            ),
+                      Flexible(
+                        child: Text(
+                          'Remind me after',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: settings.enabled
+                                    ? null
+                                    : Theme.of(context).disabledColor,
+                              ),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       SizedBox(
@@ -115,13 +117,15 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        'minutes',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: settings.enabled
-                                  ? null
-                                  : Theme.of(context).disabledColor,
-                            ),
+                      Flexible(
+                        child: Text(
+                          'minutes',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: settings.enabled
+                                    ? null
+                                    : Theme.of(context).disabledColor,
+                              ),
+                        ),
                       ),
                     ],
                   ),
