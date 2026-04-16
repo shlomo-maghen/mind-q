@@ -77,14 +77,14 @@ class _MindQAppState extends ConsumerState<MindQApp>
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFEE616E),
+          seedColor: const Color.fromARGB(255, 17, 145, 47),
           brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFEE616E),
+          seedColor: const Color.fromARGB(255, 17, 145, 47),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
