@@ -85,9 +85,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      Flexible(
+                      Expanded(
                         child: Text(
-                          'Remind me after',
+                          'Number of minutes to be notified',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: settings.enabled
                                     ? null
@@ -114,17 +114,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                           ),
                           onSubmitted: (_) => _commitDelay(),
                           onTapOutside: (_) => _commitDelay(),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Flexible(
-                        child: Text(
-                          'minutes',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: settings.enabled
-                                    ? null
-                                    : Theme.of(context).disabledColor,
-                              ),
                         ),
                       ),
                     ],
