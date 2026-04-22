@@ -52,7 +52,7 @@ class NotificationService {
     await _plugin
         .zonedSchedule(
           _notifId,
-          'Mind-Q',
+          'MindQueue Reminders',
           body,
           scheduledTime,
           const NotificationDetails(
