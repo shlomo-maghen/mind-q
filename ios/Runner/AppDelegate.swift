@@ -11,7 +11,7 @@ import UIKit
     let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
     if let controller = window?.rootViewController as? FlutterViewController {
-      let appChannel = FlutterMethodChannel(name: "com.mindq/app", binaryMessenger: controller.binaryMessenger)
+      let appChannel = FlutterMethodChannel(name: "com.lismodev.mindqueue/app", binaryMessenger: controller.binaryMessenger)
       appChannel.setMethodCallHandler { (call, result) in
         if call.method == "moveToBackground" {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

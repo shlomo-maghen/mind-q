@@ -13,6 +13,6 @@ void main() {
   testWidgets('App renders without crashing', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: MindQApp()));
     await tester.pump();
-    expect(find.text('Mind-Q'), findsOneWidget);
+    expect(find.text('MindQueue'), findsOneWidget);
   });
 }
