@@ -7,7 +7,7 @@ import '../providers/queue_provider.dart';
 import 'empty_state.dart';
 import 'queue_item_card.dart';
 
-const _appChannel = MethodChannel('com.mindq/app');
+const _appChannel = MethodChannel('com.lismodev.mindqueue/app');
 
 class QueueView extends ConsumerStatefulWidget {
   const QueueView({super.key});
@@ -84,7 +84,7 @@ class _QueueViewState extends ConsumerState<QueueView> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Mind-Q'),
+        title: const Text('MindQueue'),
         centerTitle: false,
         actions: [
           if (hasItems)
@@ -156,7 +156,10 @@ class _QueueViewState extends ConsumerState<QueueView> {
                     left: 0,
                     right: 0,
                     bottom: MediaQuery.of(context).viewInsets.bottom,
-                    child: _buildActionButtons(),
+                    child: SafeArea(
+                      top: false,
+                      child: _buildActionButtons(),
+                    ),
                   ),
               ],
             ),
